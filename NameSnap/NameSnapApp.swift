@@ -13,5 +13,6 @@ struct NameSnapApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: NamedPhoto.self)
     }
 }
