@@ -49,9 +49,9 @@ struct ContentView: View {
                     )
                 }
             }
-            .alert("Error", isPresented: .constant(errorMessage != nil)) { // Добавляем алерт
+            .alert("Error", isPresented: .constant(errorMessage != nil)) {
                 Button("OK", role: .cancel) {
-                    errorMessage = nil // Сброс ошибки после закрытия алерта
+                    errorMessage = nil 
                 }
             } message: {
                 Text(errorMessage ?? "Unknown error")
