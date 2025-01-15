@@ -5,8 +5,6 @@
 //  Created by Saydulayev on 14.01.25.
 //
 
-import SwiftUI
-import PhotosUI
 
 import SwiftUI
 import PhotosUI
@@ -27,11 +25,8 @@ struct PhotoPickerView: View {
                             .multilineTextAlignment(.center)
                     }
                 } else {
-                    ContentUnavailableView(
-                        "Выбрать изображение",
-                        systemImage: "photo.badge.plus",
-                        description: Text("Нажмите, чтобы выбрать изображение")
-                    )
+                    Image(systemName: "photo")
+                        .foregroundStyle(.blue)
                 }
             }
         .buttonStyle(.plain)
