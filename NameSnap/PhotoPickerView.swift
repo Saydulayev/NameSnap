@@ -17,22 +17,25 @@ struct PhotoPickerView: View {
     let loadImage: () -> Void
 
     var body: some View {
-            PhotosPicker(selection: $selectedItem, matching: .images) {
+        PhotosPicker(selection: $selectedItem, matching: .images) {
+            ZStack {
                 if imageData != nil {
-                    VStack {
-                        Text("Нажмите, чтобы выбрать другое изображение")
-                            .foregroundColor(.blue)
-                            .multilineTextAlignment(.center)
-                    }
+                    Image(systemName: "photo.on.rectangle.angled")
+                        .foregroundStyle(.blue)
+                        .font(.system(size: 24, weight: .bold))
                 } else {
                     Image(systemName: "photo")
                         .foregroundStyle(.blue)
+                        .font(.system(size: 24, weight: .bold))
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
         .buttonStyle(.plain)
         .onChange(of: selectedItem, loadImage)
     }
 }
+
 
 
 
