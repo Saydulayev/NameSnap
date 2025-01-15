@@ -5,13 +5,14 @@
 //  Created by Saydulayev on 15.01.25.
 //
 
+
 import SwiftUI
 
 struct PhotoInputSection: View {
     let processedImage: Image
     @Binding var photoName: String
     let onSave: () -> Void
-    let onCancel: () -> Void // Добавляем замыкание для отмены
+    let onCancel: () -> Void
 
     var body: some View {
         VStack(spacing: 16) {
@@ -54,14 +55,13 @@ struct PhotoInputSection: View {
         .padding(.horizontal)
     }
 }
-
 #Preview {
     @Previewable @State var photoName = "Sample Photo"
     PhotoInputSection(
         processedImage: Image(systemName: "photo"),
         photoName: $photoName,
         onSave: {},
-        onCancel: { photoName = "" } // Реализация сброса имени в превью
+        onCancel: { photoName = "" } 
     )
 }
 

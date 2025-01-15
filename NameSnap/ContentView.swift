@@ -5,6 +5,7 @@
 //  Created by Saydulayev on 14.01.25.
 //
 
+
 import SwiftUI
 import PhotosUI
 import SwiftData
@@ -44,9 +45,7 @@ struct ContentView: View {
                     photoName: $photoName,
                     onSave: savePhoto,
                     onCancel: {
-                        photoName = ""
-                        processedImage = nil
-                        imageData = nil
+                        resetStates()
                         isAddingPhoto = false
                     },
                     loadImage: loadImage
@@ -62,6 +61,8 @@ struct ContentView: View {
         }
     }
 
+    // MARK: - Methods
+    
     func loadImage() {
         Task {
             do {
@@ -83,17 +84,21 @@ struct ContentView: View {
         guard !photoName.isEmpty, let imageData else { return }
         let newPhoto = NamedPhoto(name: photoName, photo: imageData)
         modelContext.insert(newPhoto)
-        photoName = ""
-        self.imageData = nil
-        processedImage = nil
+        resetStates()
         isAddingPhoto = false
     }
 
     func deletePhoto(_ photo: NamedPhoto) {
         modelContext.delete(photo)
     }
+    
+    private func resetStates() {
+        photoName = ""
+        processedImage = nil
+        imageData = nil
+        selectedItem = nil
+    }
 }
-
 
 
 #Preview {
