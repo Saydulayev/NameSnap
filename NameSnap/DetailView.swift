@@ -36,7 +36,7 @@ struct DetailView: View {
                                     }
                                 }
                                 .onEnded { _ in
-                                    withAnimation(.spring()) {
+                                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7, blendDuration: 0.5)) {
                                         scale = 1.0
                                         isTextHidden = false
                                     }

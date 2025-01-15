@@ -44,6 +44,10 @@ struct EditPhotoView: View {
                     PhotosPicker(selection: $selectedItem, matching: .images) {
                         Label("Replace Photo", systemImage: "photo.on.rectangle.angled")
                             .foregroundColor(.blue)
+                            .onChange(of: selectedItem) {
+                                loadImage()
+                                newImageData = nil
+                            }
                     }
                     .onChange(of: selectedItem, loadImage)
                 }
@@ -66,6 +70,7 @@ struct EditPhotoView: View {
                         dismiss()
                     }
                     .bold()
+                    .disabled(newName.isEmpty && newImageData == nil)
                 }
             }
         }

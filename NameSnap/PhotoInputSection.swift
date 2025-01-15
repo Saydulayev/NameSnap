@@ -30,6 +30,7 @@ struct PhotoInputSection: View {
                 Label("Save Photo", systemImage: "tray.and.arrow.down.fill")
                     .frame(maxWidth: .infinity)
             }
+            .disabled(photoName.isEmpty)
             .buttonStyle(.borderedProminent)
             .tint(.blue)
             .padding(.horizontal)

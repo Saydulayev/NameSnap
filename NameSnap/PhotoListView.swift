@@ -11,6 +11,9 @@ struct PhotoListView: View {
     let namedPhotos: [NamedPhoto]
     let onDelete: (NamedPhoto) -> Void
 
+    @State private var photoToDelete: NamedPhoto?
+    @State private var showConfirmationDialog = false
+
     var body: some View {
         List {
             Section(header: Text("Saved Photos").font(.headline).foregroundStyle(.gray)) {
@@ -30,9 +33,6 @@ struct PhotoListView: View {
                                     Text(photo.name)
                                         .font(.headline)
                                         .foregroundStyle(.primary)
-//                                    Text("Tap to see details")
-//                                        .font(.subheadline)
-//                                        .foregroundStyle(.secondary)
                                 }
                                 .padding(.horizontal)
                                 Spacer()
@@ -48,7 +48,8 @@ struct PhotoListView: View {
                     .listRowSeparator(.hidden)
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button(role: .destructive) {
-                            onDelete(photo)
+                            photoToDelete = photo
+                            showConfirmationDialog = true
                         } label: {
                             Label("Delete", systemImage: "trash")
                                 .frame(width: 64, height: 64)
@@ -61,6 +62,14 @@ struct PhotoListView: View {
             }
         }
         .listStyle(.plain)
+        .confirmationDialog("Are you sure you want to delete this photo?", isPresented: $showConfirmationDialog, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                if let photoToDelete {
+                    onDelete(photoToDelete)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        }
     }
 }
 

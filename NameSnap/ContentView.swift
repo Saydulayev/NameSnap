@@ -32,12 +32,6 @@ struct ContentView: View {
                 }
 
                 Spacer()
-                
-                if let errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .padding()
-                }
 
                 PhotoListView(
                     namedPhotos: namedPhotos,
@@ -54,6 +48,13 @@ struct ContentView: View {
                         loadImage: loadImage
                     )
                 }
+            }
+            .alert("Error", isPresented: .constant(errorMessage != nil)) { // Добавляем алерт
+                Button("OK", role: .cancel) {
+                    errorMessage = nil // Сброс ошибки после закрытия алерта
+                }
+            } message: {
+                Text(errorMessage ?? "Unknown error")
             }
         }
     }
