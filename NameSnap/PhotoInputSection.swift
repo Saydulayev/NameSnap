@@ -11,6 +11,7 @@ struct PhotoInputSection: View {
     let processedImage: Image
     @Binding var photoName: String
     let onSave: () -> Void
+    let onCancel: () -> Void // Добавляем замыкание для отмены
 
     var body: some View {
         VStack(spacing: 16) {
@@ -26,13 +27,22 @@ struct PhotoInputSection: View {
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal)
             
-            Button(action: onSave) {
-                Label("Save Photo", systemImage: "tray.and.arrow.down.fill")
-                    .frame(maxWidth: .infinity)
+            HStack {
+                Button(action: onSave) {
+                    Label("Save Photo", systemImage: "tray.and.arrow.down.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .disabled(photoName.isEmpty)
+                .buttonStyle(.borderedProminent)
+                .tint(.blue)
+                
+                Button(action: onCancel) {
+                    Label("Cancel", systemImage: "xmark.circle")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .tint(.red)
             }
-            .disabled(photoName.isEmpty)
-            .buttonStyle(.borderedProminent)
-            .tint(.blue)
             .padding(.horizontal)
         }
         .padding(.vertical)
@@ -50,6 +60,8 @@ struct PhotoInputSection: View {
     PhotoInputSection(
         processedImage: Image(systemName: "photo"),
         photoName: $photoName,
-        onSave: {}
+        onSave: {},
+        onCancel: { photoName = "" } // Реализация сброса имени в превью
     )
 }
+

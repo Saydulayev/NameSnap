@@ -9,7 +9,6 @@ import SwiftUI
 import PhotosUI
 import SwiftData
 
-
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
 
@@ -19,20 +18,11 @@ struct ContentView: View {
     @State private var errorMessage: String?
     @State private var photoName: String = ""
     @Query(sort: \NamedPhoto.name) private var namedPhotos: [NamedPhoto]
+    @State private var isAddingPhoto = false
 
     var body: some View {
         NavigationStack {
             VStack {
-                if let processedImage {
-                    PhotoInputSection(
-                        processedImage: processedImage,
-                        photoName: $photoName,
-                        onSave: savePhoto
-                    )
-                }
-
-                Spacer()
-
                 PhotoListView(
                     namedPhotos: namedPhotos,
                     onDelete: deletePhoto
@@ -41,17 +31,30 @@ struct ContentView: View {
             .navigationTitle("NameSnap")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    PhotoPickerView(
-                        selectedItem: $selectedItem,
-                        imageData: $imageData,
-                        errorMessage: $errorMessage,
-                        loadImage: loadImage
-                    )
+                    Button(action: { isAddingPhoto = true }) {
+                        Image(systemName: "plus")
+                    }
                 }
+            }
+            .sheet(isPresented: $isAddingPhoto) {
+                AddPhotoView(
+                    selectedItem: $selectedItem,
+                    imageData: $imageData,
+                    processedImage: $processedImage,
+                    photoName: $photoName,
+                    onSave: savePhoto,
+                    onCancel: {
+                        photoName = ""
+                        processedImage = nil
+                        imageData = nil
+                        isAddingPhoto = false
+                    },
+                    loadImage: loadImage
+                )
             }
             .alert("Error", isPresented: .constant(errorMessage != nil)) {
                 Button("OK", role: .cancel) {
-                    errorMessage = nil 
+                    errorMessage = nil
                 }
             } message: {
                 Text(errorMessage ?? "Unknown error")
@@ -83,6 +86,7 @@ struct ContentView: View {
         photoName = ""
         self.imageData = nil
         processedImage = nil
+        isAddingPhoto = false
     }
 
     func deletePhoto(_ photo: NamedPhoto) {
@@ -95,6 +99,7 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
 
 
 

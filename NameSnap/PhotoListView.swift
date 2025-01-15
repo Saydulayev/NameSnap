@@ -13,55 +13,70 @@ struct PhotoListView: View {
 
     @State private var photoToDelete: NamedPhoto?
     @State private var showConfirmationDialog = false
+    @State private var searchText = ""
+
+    var filteredPhotos: [NamedPhoto] {
+        if searchText.isEmpty {
+            return namedPhotos
+        } else {
+            return namedPhotos.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        }
+    }
 
     var body: some View {
-        List {
-            Section(header: Text("Saved Photos").font(.headline).foregroundStyle(.gray)) {
-                ForEach(namedPhotos) { photo in
-                    NavigationLink(destination: DetailView(photo: photo)) {
-                        VStack {
-                            HStack(spacing: 16) {
-                                if let uiImage = UIImage(data: photo.photo) {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 64, height: 64)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                                        .shadow(radius: 3)
+        VStack {
+            // Поле поиска
+            TextField("Search photos", text: $searchText)
+                .textFieldStyle(.roundedBorder)
+                .padding(.horizontal)
+
+            List {
+                Section(header: Text("Saved Photos").font(.headline).foregroundStyle(.gray)) {
+                    ForEach(filteredPhotos) { photo in
+                        NavigationLink(destination: DetailView(photo: photo)) {
+                            VStack {
+                                HStack(spacing: 16) {
+                                    if let uiImage = UIImage(data: photo.photo) {
+                                        Image(uiImage: uiImage)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 64, height: 64)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                            .shadow(radius: 3)
+                                    }
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(photo.name)
+                                            .font(.headline)
+                                            .foregroundStyle(.primary)
+                                    }
+                                    Spacer()
                                 }
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(photo.name)
-                                        .font(.headline)
-                                        .foregroundStyle(.primary)
-                                }
-                                .padding(.horizontal)
-                                Spacer()
+                                .frame(maxHeight: 80)
+                                .padding(.vertical, 8)
+                                Rectangle()
+                                    .frame(height: 1)
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundColor(.gray.opacity(0.2))
                             }
-                            .frame(maxHeight: 80)
-                            .padding(.vertical, 8)
-                            Rectangle()
-                                .frame(height: 1)
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(.gray.opacity(0.2))
                         }
-                    }
-                    .listRowSeparator(.hidden)
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            photoToDelete = photo
-                            showConfirmationDialog = true
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                                .frame(width: 64, height: 64)
-                                .background(Color.red)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .foregroundColor(.white)
+                        .listRowSeparator(.hidden)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                photoToDelete = photo
+                                showConfirmationDialog = true
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                                    .frame(width: 64, height: 64)
+                                    .background(Color.red)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .foregroundColor(.white)
+                            }
                         }
                     }
                 }
             }
+            .listStyle(.plain)
         }
-        .listStyle(.plain)
         .confirmationDialog("Are you sure you want to delete this photo?", isPresented: $showConfirmationDialog, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 if let photoToDelete {
@@ -72,6 +87,20 @@ struct PhotoListView: View {
         }
     }
 }
+
+#Preview {
+    let samplePhotos = [
+        NamedPhoto(name: "Beach", photo: UIImage(systemName: "photo")!.jpegData(compressionQuality: 1.0)!),
+        NamedPhoto(name: "Mountain", photo: UIImage(systemName: "photo")!.jpegData(compressionQuality: 1.0)!),
+        NamedPhoto(name: "City", photo: UIImage(systemName: "photo")!.jpegData(compressionQuality: 1.0)!)
+    ]
+    
+    PhotoListView(
+        namedPhotos: samplePhotos,
+        onDelete: { _ in }
+    )
+}
+
 
 #Preview {
     let samplePhotos = [
