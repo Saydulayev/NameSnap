@@ -9,9 +9,12 @@
 import SwiftUI
 import PhotosUI
 import SwiftData
+import CoreLocation  
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+
+    private let locationFetcher = LocationFetcher()
 
     @State private var selectedItem: PhotosPickerItem?
     @State private var imageData: Data?
@@ -24,15 +27,15 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                PhotoListView(
-                    namedPhotos: namedPhotos,
-                    onDelete: deletePhoto
-                )
+                PhotoListView(namedPhotos: namedPhotos, onDelete: deletePhoto)
             }
             .navigationTitle("NameSnap")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { isAddingPhoto = true }) {
+                    Button(action: {
+                        locationFetcher.start()
+                        isAddingPhoto = true
+                    }) {
                         Image(systemName: "plus")
                     }
                 }
@@ -82,7 +85,16 @@ struct ContentView: View {
 
     func savePhoto() {
         guard !photoName.isEmpty, let imageData else { return }
-        let newPhoto = NamedPhoto(name: photoName, photo: imageData)
+        
+        let location = locationFetcher.lastKnownLocation
+        
+        let newPhoto = NamedPhoto(
+            name: photoName,
+            photo: imageData,
+            latitude: location?.latitude,
+            longitude: location?.longitude
+        )
+
         modelContext.insert(newPhoto)
         resetStates()
         isAddingPhoto = false
@@ -99,6 +111,7 @@ struct ContentView: View {
         selectedItem = nil
     }
 }
+
 
 
 #Preview {
