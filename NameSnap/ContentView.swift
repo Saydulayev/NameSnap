@@ -46,13 +46,22 @@ struct ContentView: View {
                     imageData: $imageData,
                     processedImage: $processedImage,
                     photoName: $photoName,
-                    onSave: savePhoto,
+                    onSave: { location in
+                        let newPhoto = NamedPhoto(
+                            name: photoName,
+                            photo: imageData ?? Data(),
+                            latitude: location?.latitude,
+                            longitude: location?.longitude
+                        )
+                        modelContext.insert(newPhoto)
+                        isAddingPhoto = false
+                    },
                     onCancel: {
-                        resetStates()
                         isAddingPhoto = false
                     },
                     loadImage: loadImage
                 )
+
             }
             .alert("Error", isPresented: .constant(errorMessage != nil)) {
                 Button("OK", role: .cancel) {
