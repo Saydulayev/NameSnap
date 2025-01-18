@@ -29,7 +29,8 @@ struct EditPhotoView: View {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFit()
-                            .frame(maxHeight: 250)
+                            .frame(height: 250)
+                            .frame(maxWidth: .infinity)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .shadow(radius: 5)
                     } else if let uiImage = UIImage(data: photo.photo) {
@@ -37,7 +38,8 @@ struct EditPhotoView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(height: 250)
-                            .cornerRadius(12)
+                            .frame(maxWidth: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                             .shadow(radius: 5)
                     }
 
