@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct PhotoListView: View {
     let namedPhotos: [NamedPhoto]
     let onDelete: (NamedPhoto) -> Void
@@ -16,13 +15,60 @@ struct PhotoListView: View {
     @State private var showConfirmationDialog = false
     @State private var searchText = ""
 
+    /// Отфильтрованный и отсортированный список
     var filteredPhotos: [NamedPhoto] {
-        if searchText.isEmpty {
-            return namedPhotos
-        } else {
-            return namedPhotos.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+        let filtered = namedPhotos.filter { photo in
+            searchText.isEmpty || photo.name.localizedCaseInsensitiveContains(searchText)
         }
+        return filtered.sorted()
     }
+
+    /// Вспомогательный метод для отображения строки списка
+    private func photoRow(for photo: NamedPhoto) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 16) {
+                // Отображение изображения
+                if let uiImage = UIImage(data: photo.photo) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 64, height: 64)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .shadow(radius: 3)
+                }
+
+                // Основной текстовый блок
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(photo.name)
+                        .font(.headline)
+
+                    // Дата добавления
+                    Text("Added: \(photo.dateAdded, style: .date)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    // Город или fallback, если он отсутствует
+                    if let city = photo.city {
+                        Text("City: \(city)")
+                            .font(.caption)
+                            .foregroundStyle(.gray)
+                    } else {
+                        Text("City: Location not available")
+                            .font(.caption)
+                            .foregroundStyle(.gray)
+                    }
+                }
+                Spacer()
+            }
+
+            Rectangle()
+                .frame(height: 1)
+                .frame(maxWidth: .infinity)
+                .foregroundColor(.gray.opacity(0.2))
+        }
+        .padding(.vertical, 8)
+    }
+
 
     var body: some View {
         VStack {
@@ -37,30 +83,7 @@ struct PhotoListView: View {
                 ) {
                     ForEach(filteredPhotos) { photo in
                         NavigationLink(destination: DetailView(photo: photo)) {
-                            VStack {
-                                HStack(spacing: 16) {
-                                    if let uiImage = UIImage(data: photo.photo) {
-                                        Image(uiImage: uiImage)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 64, height: 64)
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                                            .shadow(radius: 3)
-                                    }
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(photo.name)
-                                            .font(.headline)
-                                    }
-                                    Spacer()
-                                }
-                                .frame(maxHeight: 80)
-                                .padding(.vertical, 8)
-
-                                Rectangle()
-                                    .frame(height: 1)
-                                    .frame(maxWidth: .infinity)
-                                    .foregroundColor(.gray.opacity(0.2))
-                            }
+                            photoRow(for: photo)
                         }
                         .listRowSeparator(.hidden)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -91,6 +114,7 @@ struct PhotoListView: View {
         }
     }
 }
+
 
 
 #Preview {

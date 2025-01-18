@@ -13,6 +13,7 @@ import PhotosUI
 @Observable
 final class ContentViewModel {
     private let locationFetcher = LocationFetcher()
+    private let geocoder = CLGeocoder()
 
     // Данные для добавления нового фото
     var selectedItem: PhotosPickerItem?
@@ -32,22 +33,30 @@ final class ContentViewModel {
 
     /// Обрабатывает сохранение нового фото
     func savePhoto(location: CLLocationCoordinate2D?, modelContext: ModelContext) {
-        guard let imageData = imageData else {
-            errorMessage = "Please select a valid image."
-            return
+            guard let imageData = imageData else {
+                errorMessage = "Please select a valid image."
+                return
+            }
+
+            let newPhoto = NamedPhoto(name: photoName, photo: imageData, latitude: location?.latitude, longitude: location?.longitude)
+
+            // Обратное геокодирование для определения города
+            if let location = location {
+                let clLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+                geocoder.reverseGeocodeLocation(clLocation) { placemarks, error in
+                    if let placemark = placemarks?.first, error == nil {
+                        newPhoto.city = placemark.locality // Название города
+                    }
+                    modelContext.insert(newPhoto)
+                    try? modelContext.save()
+                }
+            } else {
+                modelContext.insert(newPhoto)
+                try? modelContext.save()
+            }
+
+            resetPhotoState()
         }
-
-        let newPhoto = NamedPhoto(
-            name: photoName,
-            photo: imageData,
-            latitude: location?.latitude,
-            longitude: location?.longitude
-        )
-        modelContext.insert(newPhoto)
-
-        // Сбрасываем состояние
-        resetPhotoState()
-    }
 
     /// Удаляет указанное фото
     func deletePhoto(_ photo: NamedPhoto, modelContext: ModelContext) {
