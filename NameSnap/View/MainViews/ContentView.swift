@@ -10,7 +10,6 @@ import SwiftUI
 import PhotosUI
 import SwiftData
 
-
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \NamedPhoto.name) private var namedPhotos: [NamedPhoto]
@@ -19,16 +18,19 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                PhotoListView(namedPhotos: namedPhotos, onDelete: { photo in
-                    viewModel.deletePhoto(photo, modelContext: modelContext)
-                })
+                PhotoListView(
+                    namedPhotos: namedPhotos,
+                    onDelete: { photo in
+                        viewModel.deletePhoto(photo, modelContext: modelContext)
+                    }
+                )
             }
             .navigationTitle("NameSnap")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
+                    Button {
                         viewModel.startAddingPhoto()
-                    }) {
+                    } label: {
                         Image(systemName: "plus")
                     }
                 }
@@ -57,6 +59,7 @@ struct ContentView: View {
         }
     }
 }
+
 
 
 

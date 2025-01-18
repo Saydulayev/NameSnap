@@ -6,10 +6,9 @@
 //
 
 import SwiftUI
-import PhotosUI
 import SwiftData
-
-
+import CoreLocation  
+import PhotosUI
 
 @Observable
 final class ContentViewModel {
@@ -45,12 +44,21 @@ final class ContentViewModel {
             longitude: location?.longitude
         )
         modelContext.insert(newPhoto)
+
+        // Сбрасываем состояние
         resetPhotoState()
     }
 
     /// Удаляет указанное фото
     func deletePhoto(_ photo: NamedPhoto, modelContext: ModelContext) {
-        modelContext.delete(photo)
+        withAnimation {
+            modelContext.delete(photo)
+            do {
+                try modelContext.save()
+            } catch {
+                print("Failed to save deletion: \(error)")
+            }
+        }
     }
 
     /// Сбрасывает состояние добавления фото
@@ -67,3 +75,4 @@ final class ContentViewModel {
         isAddingPhoto = false
     }
 }
+
