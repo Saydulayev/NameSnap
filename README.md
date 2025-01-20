@@ -17,6 +17,7 @@ NameSnap is a simple yet powerful app designed to help you remember the names of
 - **Data Persistence**: All your saved entries are stored securely and remain available even after restarting the app.
 - **Delete Confirmation**: Avoid accidental deletions with a confirmation dialog.
 - **Smooth Animations**: Zoom into photos with pinch gestures, and enjoy smooth animations as text fades in and out.
+- **Core Location**: To track and display the location where each photo and name entry is created.
 
 ---
 
