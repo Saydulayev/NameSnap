@@ -30,6 +30,7 @@ NameSnap is built using modern tools and frameworks for iOS development:
 - **SwiftData**: For efficient and secure data persistence, including storing images and names.
 - **Combine**: To handle state updates and reactive programming seamlessly.
 - **CoreAnimation**: For smooth animations like scaling and hiding elements.
+- **Core Location**: To track and display the location where each photo and name entry is created.
 
 ---
 
